@@ -32,6 +32,17 @@
       }
     }
 
+    //寄送驗證碼
+    function sendEmailVerification() {
+      // [START sendemailverification]
+      firebase.auth().currentUser.sendEmailVerification().then(function() {
+        // Email Verification sent!
+        // [START_EXCLUDE]
+        alert('Email Verification Sent!');
+        // [END_EXCLUDE]
+      });
+      // [END sendemailverification]
+    }
 
 	   //初始化
     function initApp() {
@@ -39,7 +50,9 @@
 
 	     //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
-
+        // [START_EXCLUDE silent]
+        document.getElementById('quickstart-verify-email').disabled = true;
+        // [END_EXCLUDE]
         if (user) {
           // User is signed in.
           var displayName = user.displayName;
@@ -53,7 +66,9 @@
           //元件初始化
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
-
+          if (!emailVerified) {
+            document.getElementById('quickstart-verify-email').disabled = false;
+          }
           //storage空間應用
     		  var storageRef = firebase.storage().ref();
 
@@ -101,6 +116,7 @@
 
 
 	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+    document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
 
     }
 
@@ -125,7 +141,8 @@
   <main class="mdl-layout__content mdl-color--grey-100">
 
 	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
-
+  &nbsp;&nbsp;&nbsp;
+  <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
 	<h1>這是登入後的頁面</h1>
 
 
