@@ -4,6 +4,7 @@
 <head>
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="aD3fKiDVrsnXJ8m47IC2qMrJxCGn4nHNl4LX-Hnoeb8" />
   <title>登入頁面</title>
 
   <!-- Material Design Theming -->
@@ -46,7 +47,7 @@
 
 	   //初始化
     function initApp() {
-      console.log("已換到page2");
+      console.log("已登入homepage");
 
 	     //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
@@ -63,9 +64,14 @@
           var uid = user.uid;
           var providerData = user.providerData;
 
+          document.getElementById('loginEmaildisplay').textContent = email;
+
+
           //元件初始化
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+          console.log(user);
+
           if (!emailVerified) {
             document.getElementById('quickstart-verify-email').disabled = false;
           }
@@ -143,7 +149,18 @@
 	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
   &nbsp;&nbsp;&nbsp;
   <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
-	<h1>這是登入後的頁面</h1>
+
+  <br>
+  <span>登入者是: </span>
+  <span id="loginEmaildisplay"></span>
+
+  <div class="mdl-card__supporting-text mdl-color-text--grey-600" id="messagesDiv">
+      <p>Select a file below. When it is uploaded, a link will be displayed to the uploaded file.</p>
+      <h6>Choose File</h6>
+      <input type="file" id="file" name="file"/>
+      <h6>File URL:</h6>
+      <span id="linkbox"></span>
+    </div>
 
 
 	<img id="myimg" >
