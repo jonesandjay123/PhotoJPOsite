@@ -35,6 +35,7 @@
 
 	   //初始化
     function initApp() {
+      console.log("已換到page2");
 
 	     //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
@@ -56,12 +57,12 @@
           //storage空間應用
     		  var storageRef = firebase.storage().ref();
 
-    		  	 storageRef.child('images/photoJPOicon.png').getDownloadURL().then(function(url) {
-    				  var img = document.getElementById('myimg');
-    				  img.src = url;
-    				    }).catch(function(error) {
-    				          alert("出錯!");
-	             });
+		  	 // storageRef.child('images/photoJPOicon.png').getDownloadURL().then(function(url) {
+				 //  var img = document.getElementById('myimg');
+				 //  img.src = url;
+				 //    }).catch(function(error) {
+				 //          alert("出錯!");
+         //   });
 
     		  //讀取資料庫
     		  var scoresRef = firebase.database().ref("User");
