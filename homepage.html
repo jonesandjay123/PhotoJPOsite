@@ -48,75 +48,116 @@
     //上傳圖片
     function uploadFile()
     {
-      var storageRef = firebase.storage().ref();
-
-      var oFile = document.getElementById('file').files[0];
-      if(oFile != null) {
-        console.log("準備上傳: ");
-        console.log(oFile);
-
-        var sFilename = oFile.name;
-        console.log("檔案名稱: "+sFilename);
-
-
-        // File or Blob named mountains.jpg
-        var file = oFile;
-
-        // Create the file metadata
-        var metadata = {
-          contentType: 'image/jpeg'
-        };
-
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        var uploadTask = storageRef.child('images/' + file.name).put(file, metadata);
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function(snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused');
-                break;
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-                break;
-            }
-          }, function(error) {
-
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/unauthorized':
-              // User doesn't have permission to access the object
-              break;
-            case 'storage/canceled':
-              // User canceled the upload
-              break;
-            case 'storage/unknown':
-              // Unknown error occurred, inspect error.serverResponse
-              break;
-          }
-        }, function() {
-          // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-            console.log('File available at', downloadURL);
-            alert("上傳成功!!");
-
-             var img = document.getElementById('myimg');
-             img.src = downloadURL;
-
-          });
-        });
 
 
 
-      }
-      else{
-        alert("未選擇檔案~");
-      }
+      //登入驗證
+      firebase.auth().onAuthStateChanged(function(user) {
+
+       if (user) {
+         // User is signed in.
+         var email = user.email;
+         var uid = user.uid;
+
+
+         var storageRef = firebase.storage().ref();
+
+         var oFile = document.getElementById('file').files[0];
+         if(oFile != null) {
+           console.log("準備上傳: ");
+           console.log(oFile);
+
+           var sFilename = oFile.name;
+           console.log(uid+"的 檔案名稱: "+sFilename);
+
+
+           // File or Blob named mountains.jpg
+           var file = oFile;
+
+           // Create the file metadata
+           var metadata = {
+             contentType: 'image/jpeg'
+           };
+
+           // Upload file and metadata to the object 'images/mountains.jpg'
+           var uploadTask = storageRef.child(uid + '/' + file.name).put(file, metadata);
+
+           // Listen for state changes, errors, and completion of the upload.
+           uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+             function(snapshot) {
+               // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+               var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+               console.log('Upload is ' + progress + '% done');
+               switch (snapshot.state) {
+                 case firebase.storage.TaskState.PAUSED: // or 'paused'
+                   console.log('Upload is paused');
+                   break;
+                 case firebase.storage.TaskState.RUNNING: // or 'running'
+                   console.log('Upload is running');
+                   break;
+               }
+             }, function(error) {
+
+             // A full list of error codes is available at
+             // https://firebase.google.com/docs/storage/web/handle-errors
+             switch (error.code) {
+               case 'storage/unauthorized':
+                 // User doesn't have permission to access the object
+                 break;
+               case 'storage/canceled':
+                 // User canceled the upload
+                 break;
+               case 'storage/unknown':
+                 // Unknown error occurred, inspect error.serverResponse
+                 break;
+             }
+           }, function() {
+             // Upload completed successfully, now we can get the download URL
+             uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+               console.log('File available at', downloadURL);
+               alert("上傳成功!!");
+
+                var img = document.getElementById('myimg');
+                img.src = downloadURL;
+
+                var inputObj = {
+                  test: downloadURL,
+                };
+
+                firebase.database().ref("picture/"+uid).set(inputObj,function(error){
+                  if(error){
+                    alert(sFilename+"的資料寫入失敗!");
+                    console.log(sFilename+"的資料寫入失敗! error: " + error);
+                  }
+                  else{
+                    //alert(sFilename+" 資料寫入成功!");
+                    console.log(sFilename+" 資料寫入成功!");
+                  }
+                });
+
+
+
+             });
+           });
+
+
+
+         }
+         else{
+           alert("未選擇檔案~");
+         }
+
+
+
+       }
+       else{
+         alert("無法取得登入者資訊!");
+       }
+
+      });
+
+
+
     }
 
 	   //初始化
@@ -144,7 +185,7 @@
           //元件初始化
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
-          console.log(user);
+          //console.log(user);
 
           if (!emailVerified) {
             document.getElementById('quickstart-verify-email').disabled = false;
@@ -159,8 +200,8 @@
 				 //          alert("出錯!");
          //   });
 
-    		  //讀取資料庫
-    		  var scoresRef = firebase.database().ref("User");
+    		  //讀取圖庫
+    		  var scoresRef = firebase.database().ref("user");
     			scoresRef.orderByValue().on("value", function(snapshot) {
     			  snapshot.forEach(function(data) {
     				      console.log("人員名稱 " + data.key + ": ");
