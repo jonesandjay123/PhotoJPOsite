@@ -87,12 +87,15 @@
         var UserUID = user.user.uid;
         var UserEmail = user.user.email;
 
+        var d = new Date();
+        var currentTime = d.getTime();
+
         console.log("註冊的user結果: ",user);
         console.log("註冊的UID結果: "+UserUID);
         console.log("註冊的email結果: "+UserEmail);
 
         var inputObj = {
-          UserUID: UserUID,
+          registerTime: currentTime,
           UserEmail: UserEmail
         };
 
