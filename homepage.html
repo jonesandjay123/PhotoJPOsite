@@ -1,6 +1,63 @@
 <!DOCTYPE html>
 
 <html>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+    text-align: center;
+    padding: 32px;
+}
+
+.row {
+    display: -ms-flexbox; /* IE 10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE 10 */
+    flex-wrap: wrap;
+    padding: 0 4px;
+}
+
+/* Create two equal columns that sits next to each other */
+.column {
+    -ms-flex: 50%; /* IE 10 */
+    flex: 50%;
+    padding: 0 4px;
+}
+
+.column img {
+    margin-top: 8px;
+    vertical-align: middle;
+}
+
+/* Style the buttons */
+.btn {
+    border: none;
+    outline: none;
+    padding: 10px 16px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.btn:hover {
+    background-color: #ddd;
+}
+
+.btn.active {
+    background-color: #666;
+    color: white;
+}
+</style>
+
+
 <head>
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,9 +105,6 @@
     //上傳圖片
     function uploadFile()
     {
-
-
-
       //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
 
@@ -77,7 +131,6 @@
            var metadata = {
              contentType: sFileType
            };
-
 
            var storageRef = firebase.storage().ref();
 
@@ -118,8 +171,6 @@
              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
 
                 console.log("剛剛上傳的圖片的url: "+downloadURL);
-                var img = document.getElementById('myimg');
-                img.src = downloadURL;
 
                 console.log(uploadTask.snapshot);
                 console.log(uploadTask.snapshot.metadata);
@@ -208,43 +259,44 @@
 
           document.getElementById('loginEmaildisplay').textContent = email;
 
-
           //元件初始化
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-          document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
-          //console.log(user);
+//document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
 
           if (!emailVerified) {
             document.getElementById('quickstart-verify-email').disabled = false;
           }
-          //storage空間應用
-    		  //var storageRef = firebase.storage().ref();
 
-		  	 // storageRef.child('images/photoJPOicon.png').getDownloadURL().then(function(url) {
-				 //  var img = document.getElementById('myimg');
-				 //  img.src = url;
-				 //    }).catch(function(error) {
-				 //          alert("出錯!");
-         //   });
+         console.log("登入者的uid: "+uid);
 
-    		  //讀取圖庫
-    		  var scoresRef = firebase.database().ref("user");
-    			scoresRef.orderByValue().on("value", function(snapshot) {
-    			  snapshot.forEach(function(data) {
-    				      console.log("人員名稱 " + data.key + ": ");
-				          //console.log(data.val());
-                  var parsedData = data.val();
+         //在userImg中讀取屬於uid的圖片
+         const userImgs = firebase.database().ref("userImg/"+uid);
 
+         userImgs.on("value", snapshot =>{
 
-                  for(var i in parsedData){
-                    console.log(i + ":" + parsedData[i]); //alerts key's value
-                  }
+           var imgGrid = document.getElementById("imageGrid");  //table清單
+           //每次繪製前，都要先把imgGrid過去的內容清空
+           imgGrid.innerHTML = "";
 
-                  //console.log("parsedData.Age: "+parsedData.Age);
-    			  });
-    			});
+           var srnWidth = window.innerWidth; //螢幕寬度
+           var widthStandard = (srnWidth/4) -20 ;   //用螢幕寬度/4為基準
+           console.log("圖片顯示寬度的最大允許值為: "+widthStandard);
 
-          //圖片參考: http://photoswipe.com/
+           snapshot.forEach(function(data) {
+                 //console.log("圖片pid: " + data.key + ": "+data.val());
+                 var dv = document.createElement("div");
+                 dv.className = "column";
+                 var img = document.createElement("img");
+                 img.src = data.val();
+                 img.onload = function(){
+                     if(this.width>widthStandard){
+                       this.width = widthStandard;
+                     }
+                 };
+                 dv.appendChild(img);
+                 imgGrid.appendChild(dv);
+           });
+         });
 
         }
         else
@@ -252,7 +304,7 @@
           // User is signed out.
           // [START_EXCLUDE]
           document.getElementById('quickstart-sign-in').textContent = 'Sign in';
-          document.getElementById('quickstart-account-details').textContent = 'null';
+          //document.getElementById('quickstart-account-details').textContent = 'null';
 
           //如果使用者是未登入的狀態，直接登出
 	        window.location.href = "email-password.html";
@@ -276,7 +328,6 @@
         return v.toString(16);
       });
     }
-
 
     //初始化執行緒
     window.onload = function() {
@@ -315,13 +366,79 @@
       <span id="linkbox"></span>
     </div>
 
+    <!-- Header -->
+    <div class="header" id="myHeader">
+      <h1>Image Grid</h1>
+      <p>Click on the buttons to change the grid view.</p>
+      <button class="btn" onclick="one()">1</button>
+      <button class="btn active" onclick="two()">2</button>
+      <button class="btn" onclick="four()">4</button>
+      <button class="btn" onclick="Six()">6</button>
+    </div>
 
-	<img id="myimg" >
+  <div class="row" id="imageGrid"></div>
 
-	<pre><code id="quickstart-account-details">null</code></pre>
+
+
+	<!-- <pre><code id="quickstart-account-details">null</code></pre> -->
 
 
   </main>
 </div>
+
+
+<script>
+// 參考W3school的ImageGrid
+//https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_image_grid
+var elements = document.getElementsByClassName("column");
+
+// Declare a loop variable
+var i;
+
+// Full-width images
+function one() {
+    for (i = 0; i < elements.length; i++) {
+        elements[i].style.msFlex = "100%";  // IE10
+        elements[i].style.flex = "100%";
+    }
+}
+
+// Two images side by side
+function two() {
+    for (i = 0; i < elements.length; i++) {
+        elements[i].style.msFlex = "50%";  // IE10
+        elements[i].style.flex = "50%";
+    }
+}
+
+// Four images side by side
+function four() {
+    for (i = 0; i < elements.length; i++) {
+        elements[i].style.msFlex = "25%";  // IE10
+        elements[i].style.flex = "25%";
+    }
+}
+
+// Six images side by side
+function Six() {
+    for (i = 0; i < elements.length; i++) {
+        elements[i].style.msFlex = "16.6%";  // IE10
+        elements[i].style.flex = "16.6%";
+    }
+}
+
+// Add active class to the current button (highlight it)
+var header = document.getElementById("myHeader");
+var btns = header.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function() {
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+</script>
+
+
 </body>
 </html>
