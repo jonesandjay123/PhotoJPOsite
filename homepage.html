@@ -79,6 +79,9 @@ body {
   <script src="init.js"></script>
   <script src="dist/jquery-3.3.1.slim.min.js"></script>
 
+  <script src="image-picker/image-picker.min.js"></script>
+  <link rel="stylesheet" href="image-picker/image-picker.css">
+
   <script type="text/javascript">
 
 	  //登出鈕
@@ -334,6 +337,10 @@ body {
     //初始化執行緒
     window.onload = function() {
       initApp();
+
+      //https://rvera.github.io/image-picker/
+      $("select").imagepicker();
+
     };
   </script>
 </head>
@@ -377,6 +384,14 @@ body {
       <button class="btn" onclick="four()">4</button>
       <button class="btn" onclick="Six()">6</button>
     </div>
+
+    <select class="image-picker show-html" data-limit="3" multiple="multiple">
+      <option data-img-src="http://placekitten.com/220/200" value="1">Cute Kitten 1</option>
+      <option data-img-src="http://placekitten.com/180/200" value="2">Cute Kitten 2</option>
+      <option data-img-src="http://placekitten.com/130/200" value="3">Cute Kitten 3</option>
+      <option data-img-src="http://placekitten.com/270/200" value="4">Cute Kitten 4</option>
+    </select>
+
 
   <div class="row" id="imageGrid"></div>
 
