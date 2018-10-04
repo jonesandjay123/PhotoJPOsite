@@ -77,6 +77,7 @@ body {
 
   <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
   <script src="init.js"></script>
+  <script src="dist/jquery-3.3.1.slim.min.js"></script>
 
   <script type="text/javascript">
 
@@ -288,6 +289,7 @@ body {
                  dv.className = "column";
                  var img = document.createElement("img");
                  img.src = data.val();
+                 img.id = data.key;
                  img.onload = function(){
                      if(this.width>widthStandard){
                        this.width = widthStandard;
