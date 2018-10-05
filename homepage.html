@@ -190,7 +190,7 @@
 
     }
 
-
+    //圖片訂單群組
     function sendSelection(){
 
       if($("#testSelect :selected").length == 0){
@@ -198,20 +198,83 @@
         return;
       }
 
-      // var myList = $('#testSelect option').map(function() {
-      //     return this.value;
-      // }).get();
+      firebase.auth().onAuthStateChanged(function(user) {
 
-      $('#testSelect :selected').each(function(i, selectedElement) {
-       //hexvalues[i] = $(selectedElement).val();
-       //labelvalues[i] = $(selectedElement).text();
+       if (user) {
+         // User is signed in.
+         var uid = user.uid;
+         var d = new Date();
+         var currentTime = d.getTime();
 
+         //要上傳的orderID為日期的long+uuidv4
+         var orderID = currentTime+uuidv4();
 
-       console.log($(selectedElement).val() + "  " +$(selectedElement).text());
+         var inputObj = {
+           userID : uid,
+           shipID : "",
+           orderTime : currentTime,
+           orderSpec : "",
+           orderAddress : "",
+           shipAddress : "",
+           shipped : "",
+           transactionID : "",
+           paid : false,
+           canceled : false
+         };
+         firebase.database().ref("order/"+orderID).set(inputObj,function(error){
+           if(error){
+             alert("訂單"+orderID+"的資料寫入失敗!");
+             console.log("訂單"+orderID+"的資料寫入失敗! error: " + error);
+           }
+           else{
+             console.log("訂單"+orderID+" 資料寫入成功!");
+           }
+         });
+
+         //要自己拿oid生成key值的做法如下:
+         var oid = orderID;
+         var inputObj2 = {};
+         inputObj2[oid] = false;
+
+         //userOrder的資料結構，必須使用update(而非set)，否則會蓋掉上一筆的紀錄!!
+         firebase.database().ref("userOrder/"+uid).update(inputObj2,function(error){
+           if(error){
+             alert("userOrder"+uid+"的資料寫入失敗!");
+             console.log("userOrder"+uid+"的資料寫入失敗! error: " + error);
+           }
+           else{
+             console.log("userOrder"+uid+" 資料寫入成功!");
+           }
+         });
+
+         var inputObj3 = {};
+
+        $('#testSelect :selected').each(function(i, selectedElement) {
+           //console.log($(selectedElement).val() + "  " +$(selectedElement).text());
+           var pid = $(selectedElement).text();
+           var url = $(selectedElement).val();
+           inputObj3[pid] = url;
+        });
+
+         //orderImg的資料結構，必須使用update(而非set)，否則會蓋掉上一筆的紀錄!!
+         firebase.database().ref("orderImg/"+orderID).update(inputObj3,function(error){
+           if(error){
+             alert("orderImg"+orderID+"的資料寫入失敗!");
+             console.log("orderImg"+orderID+"的資料寫入失敗! error: " + error);
+           }
+           else{
+             console.log("orderImg"+orderID+" 資料寫入成功!");
+           }
+         });
+
+       }
+       else{
+         alert("無法取得登入者資訊!");
+       }
 
       });
 
-      alert("有選取的內容! ");
+      alert("訂單送出完畢! ");
     }
 
 	   //初始化
