@@ -181,8 +181,6 @@
            alert("未選擇檔案~");
          }
 
-
-
        }
        else{
          alert("無法取得登入者資訊!");
@@ -190,8 +188,30 @@
 
       });
 
+    }
 
 
+    function sendSelection(){
+
+      if($("#testSelect :selected").length == 0){
+        alert("您未選取任何項目!");
+        return;
+      }
+
+      // var myList = $('#testSelect option').map(function() {
+      //     return this.value;
+      // }).get();
+
+      $('#testSelect :selected').each(function(i, selectedElement) {
+       //hexvalues[i] = $(selectedElement).val();
+       //labelvalues[i] = $(selectedElement).text();
+
+
+       console.log($(selectedElement).val() + "  " +$(selectedElement).text());
+
+      });
+
+      alert("有選取的內容! ");
     }
 
 	   //初始化
@@ -237,9 +257,9 @@
            snapshot.forEach(function(data) {
                  //console.log("圖片pid: " + data.key + ": "+data.val());
 
-                 $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+index+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                 $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
                  $("select").imagepicker({
-                   hide_select : false,
+                   //hide_select : false,
                    show_label  : true,
                    limit: 4,
                    limit_reached: function(){alert('最多僅可選擇4項!')}
@@ -316,6 +336,7 @@
     <h7>選擇要上傳的圖片:</h7>
     <input type="file" id="file" name="file" accept="image/x-png,image/gif,image/jpeg" />
     <button onclick="uploadFile()">上傳</button>
+    <button onclick="sendSelection()">送出選取</button>
   </div>
   <hr>
 
