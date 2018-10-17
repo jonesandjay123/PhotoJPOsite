@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+
+<style>
+/* Style the buttons */
+.dynamicAppendPic {
+     max-width: 300px;
+}
+</style>
+
+
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="aD3fKiDVrsnXJ8m47IC2qMrJxCGn4nHNl4LX-Hnoeb8" />
+  <title>登入頁面</title>
+
+  <!-- Material Design Theming -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <link rel="stylesheet" href="main.css">
+
+  <!-- Import and configure the Firebase SDK -->
+  <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+  <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+
+  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+  <script src="init.js"></script>
+  <script src="dist/jquery-3.3.1.slim.min.js"></script>
+
+  <script src="image-picker/image-picker.min.js"></script>
+  <link rel="stylesheet" href="image-picker/image-picker.css">
+
+  <script type="text/javascript">
+
+	  //登出鈕
+    function toggleSignIn() {
+      if (firebase.auth().currentUser) {
+
+        firebase.auth().signOut(); //執行登出
+
+        window.location.href = "email-password.html"; //跳轉
+      }
+    }
+
+    function goMyOrderLists(){
+      window.location.href = "homepage.html";
+    }
+
+	   //初始化
+    function initApp() {
+      console.log("已登入homepage");
+
+	     //登入驗證
+      firebase.auth().onAuthStateChanged(function(user) {
+        // [START_EXCLUDE silent]
+        document.getElementById('quickstart-verify-email').disabled = true;
+        // [END_EXCLUDE]
+        if (user) {
+          // User is signed in.
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+
+          document.getElementById('loginEmaildisplay').textContent = email;
+
+          //元件初始化
+          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+//document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+
+          if (!emailVerified) {
+            document.getElementById('quickstart-verify-email').disabled = false;
+          }
+
+         console.log("登入者的uid: "+uid);
+
+         //在userOrder中讀取屬於uid的訂單
+         const userOrders = firebase.database().ref("userOrder/"+uid);
+
+         userOrders.on("value", snapshot =>{
+           var unpaidList = new Array(); //未結帳的
+           var paidList = new Array();   //已結帳的
+
+           snapshot.forEach(function(data) {
+              //console.log("圖片pid: " + data.key + ": "+data.val());
+              if(data.val()){
+                paidList.push(data.key);
+              }
+              else{
+                unpaidList.push(data.key);
+              }
+           });
+
+           $("#userOrderList").empty(); //先清空。
+            var opt = document.createElement('option');
+
+            //未結帳的
+            var gtpUnpaid = $('<optgroup label="未結帳" />');
+            unpaidList.forEach(function(element) {
+              $('<option />').html(element).appendTo(gtpUnpaid);
+            });
+            //已結帳的
+            var gtpPaid = $('<optgroup label="已結帳" />');
+            paidList.forEach(function(element) {
+               $('<option />').html(element).appendTo(gtpPaid);
+            });
+            gtpUnpaid.appendTo($("#userOrderList"));
+            gtpPaid.appendTo($("#userOrderList"));
+         });
+
+
+         /*
+         //在userImg中讀取屬於uid的圖片
+         const userImgs = firebase.database().ref("userImg/"+uid);
+
+         userImgs.on("value", snapshot =>{
+
+           var index = 1;
+
+           $("#testSelect").empty(); //先清空。
+
+           snapshot.forEach(function(data) {
+                 //console.log("圖片pid: " + data.key + ": "+data.val());
+
+                 $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                 $("select").imagepicker({
+                   //hide_select : false,
+                   show_label  : true,
+                   limit: 4,
+                   limit_reached: function(){alert('最多僅可選擇4項!')}
+                 });
+
+                 index++;
+           });
+         });
+         */
+        }
+        else
+        {
+          // User is signed out.
+          // [START_EXCLUDE]
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+          //document.getElementById('quickstart-account-details').textContent = 'null';
+
+          //如果使用者是未登入的狀態，直接登出
+	        window.location.href = "email-password.html";
+
+        }
+        document.getElementById('quickstart-sign-in').disabled = false;
+
+    });
+
+
+	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+    document.getElementById('viewOrders').addEventListener('click', goMyOrderLists, false);
+    }
+
+    //生成uid的方法
+    function uuidv4() {
+      return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+      //return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    //初始化執行緒
+    window.onload = function() {
+      initApp();
+
+      //https://rvera.github.io/image-picker/
+      //$("select").imagepicker({limit: 2});
+
+    };
+  </script>
+</head>
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+  <!-- Header section containing title -->
+  <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <a href="/"><h3>Firebase Authentication</h3></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+
+	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
+  &nbsp;&nbsp;&nbsp;
+  <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
+
+  <button class="mdl-button mdl-js-button mdl-button--raised" id="viewOrders" style="float:right">回首頁</button>
+
+  <br>
+  <span>登入者是: </span>
+  <span id="loginEmaildisplay"></span>
+
+  <hr>
+
+  <select id="userOrderList" onchange="alert(this.options[this.selectedIndex].value)">
+    <!-- <optgroup label="未結帳">
+     <option value="http://tw.yahoo.com">yahoo網頁</option>
+     <option value="http://www.google.com">google網頁</option>
+     <option value="http://www.youtube.com/">Youtbue</option>
+     <option value="http://www.pixnet.net/">pixnet</option>
+     <option value="http://www.wretch.cc">無名</option>
+    <optgroup label="已結帳"> -->
+  </select>
+
+    <!-- <select id="testSelect" class="image-picker show-html" multiple="multiple">
+    </select> -->
+
+
+	<!-- <pre><code id="quickstart-account-details">null</code></pre> -->
+
+
+  </main>
+</div>
+
+</body>
+</html>

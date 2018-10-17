@@ -205,11 +205,11 @@
          var uid = user.uid;
          var d = new Date();
          var currentTime = d.getTime();
-         currentTime = Math.round(currentTime/1000);
+         currentTime = Math.round(currentTime/1000); //除以一千以捨去毫秒，並取整數(避免小數點)
 
          //要上傳的orderID為日期的long+uuidv4
          var orderID = currentTime+uuidv4();
-         orderID = orderID.replace(/(\d{5})(\d{5})(.{4})/, "$1-$2-$3-")
+         orderID = orderID.replace(/(\d{5})(\d{5})(.{4})/, "$1-$2-$3-"); //前五組數字切一刀，後面4個任意碼再切一刀
 
          var inputObj = {
            userID : uid,
@@ -277,6 +277,10 @@
       });
 
       alert("訂單送出完畢! ");
+    }
+
+    function goMyOrderLists(){
+      window.location.href = "orders.html";
     }
 
 	   //初始化
@@ -353,7 +357,7 @@
 
 	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
     document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
-
+    document.getElementById('viewOrders').addEventListener('click', goMyOrderLists, false);
     }
 
     //生成uid的方法
@@ -392,6 +396,8 @@
 	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
   &nbsp;&nbsp;&nbsp;
   <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
+
+  <button class="mdl-button mdl-js-button mdl-button--raised" id="viewOrders" style="float:right">我的訂單</button>
 
   <br>
   <span>登入者是: </span>
