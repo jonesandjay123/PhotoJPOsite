@@ -29,10 +29,12 @@
 
   <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
   <script src="init.js"></script>
+  <link rel="stylesheet" type="text/css" href="dist/jquery-ui.icon-font.min.css" />
+  <link rel="stylesheet" type="text/css" href="dist/jquery-ui-1.12.icon-font.min.css" />
   <script src="dist/jquery-3.3.1.slim.min.js"></script>
 
-  <script src="image-picker/image-picker.min.js"></script>
   <link rel="stylesheet" href="image-picker/image-picker.css">
+  <script src="image-picker/image-picker.min.js"></script>
 
   <script type="text/javascript">
 
@@ -57,7 +59,6 @@
       orderImgs.on("value", snapshot =>{
 
         $("#testSelect").empty(); //先清空。
-
         snapshot.forEach(function(data) {
               $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
               $("#testSelect").imagepicker({
@@ -68,6 +69,97 @@
               });
         });
       });
+    }
+
+    //刪除訂單
+    function deleteOrder(){
+      var orderID = $("#userOrderList option:selected").text();
+
+      var r = confirm("您是否確定要刪除 "+orderID+" 這筆訂單?");
+      if (r == false) {
+        return;
+      }
+
+      //登入驗證
+     firebase.auth().onAuthStateChanged(function(user) {
+
+       // [END_EXCLUDE]
+       if (user) {
+         // User is signed in.
+         var displayName = user.displayName;
+         var email = user.email;
+         var emailVerified = user.emailVerified;
+         var photoURL = user.photoURL;
+         var isAnonymous = user.isAnonymous;
+         var uid = user.uid;
+         var providerData = user.providerData;
+
+         console.log("登入者的uid: "+uid);
+
+         //移除userOrder中的訂單
+         firebase.database().ref('userOrder/' + uid + '/' + orderID).remove().then(function() {
+            console.log("userOrder: "+uid + " 移除成功!");
+         }).catch(function(error) {
+            alert("userOrder: "+uid + " 移除時發生錯誤!", error);
+         });
+         //移除orderImg中的訂單
+         firebase.database().ref('orderImg/' + orderID).remove().then(function() {
+            console.log("orderImg: "+orderID + " 移除成功!");
+         }).catch(function(error) {
+            alert("orderImg: "+orderID + " 移除時發生錯誤!", error);
+         });
+         //移除order中的訂單
+         firebase.database().ref('order/' + orderID).remove().then(function() {
+            console.log("order: "+orderID + " 移除成功!");
+         }).catch(function(error) {
+            alert("order: "+orderID + " 移除時發生錯誤!", error);
+         });
+
+         /*
+          //在userOrder中讀取屬於uid的訂單
+          const userOrders = firebase.database().ref("userOrder/"+uid);
+
+          userOrders.on("value", snapshot =>{
+            var unpaidList = new Array(); //未結帳的
+            var paidList = new Array();   //已結帳的
+
+            snapshot.forEach(function(data) {
+               //console.log("圖片pid: " + data.key + ": "+data.val());
+               if(data.val()){
+                 paidList.push(data.key);
+               }
+               else{
+                 unpaidList.push(data.key);
+               }
+            });
+
+            $("#userOrderList").empty(); //先清空。
+             var opt = document.createElement('option');
+
+             //未結帳的
+             var gtpUnpaid = $('<optgroup label="未結帳" />');
+             unpaidList.forEach(function(element) {
+               $('<option />').html(element).appendTo(gtpUnpaid);
+             });
+             //已結帳的
+             var gtpPaid = $('<optgroup label="已結帳" />');
+             paidList.forEach(function(element) {
+                $('<option />').html(element).appendTo(gtpPaid);
+             });
+             gtpUnpaid.appendTo($("#userOrderList"));
+             gtpPaid.appendTo($("#userOrderList"));
+
+             showSelectedOrderPics($( "#userOrderList option:selected" ).text());
+          });
+          */
+         }
+         else
+         {
+           //如果使用者是未登入的狀態，直接登出
+           window.location.href = "email-password.html";
+         }
+     });
+
 
     }
 
@@ -77,8 +169,7 @@
 
 	     //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
-        // [START_EXCLUDE silent]
-        document.getElementById('quickstart-verify-email').disabled = true;
+
         // [END_EXCLUDE]
         if (user) {
           // User is signed in.
@@ -96,9 +187,6 @@
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
 //document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
 
-          if (!emailVerified) {
-            document.getElementById('quickstart-verify-email').disabled = false;
-          }
 
          console.log("登入者的uid: "+uid);
 
@@ -106,6 +194,14 @@
          const userOrders = firebase.database().ref("userOrder/"+uid);
 
          userOrders.on("value", snapshot =>{
+
+           if(!snapshot.exists()){
+             $( "#userOrderList" ).hide();
+             $( "#dtnDelOrder" ).hide();
+             $( "#testSelect" ).hide();
+             $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
+           }
+
            var unpaidList = new Array(); //未結帳的
            var paidList = new Array();   //已結帳的
 
@@ -121,6 +217,10 @@
 
            $("#userOrderList").empty(); //先清空。
             var opt = document.createElement('option');
+
+            //讓陣列反轉，達到最新的排在清單最上面的效果。
+            paidList.reverse();
+            unpaidList.reverse();
 
             //未結帳的
             var gtpUnpaid = $('<optgroup label="未結帳" />');
@@ -158,6 +258,8 @@
 
 	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
     document.getElementById('viewOrders').addEventListener('click', goMyOrderLists, false);
+    document.getElementById('dtnDelOrder').addEventListener('click', deleteOrder, false);
+
     }
 
     //生成uid的方法
@@ -194,8 +296,6 @@
   <main class="mdl-layout__content mdl-color--grey-100">
 
 	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
-  &nbsp;&nbsp;&nbsp;
-  <button class="mdl-button mdl-js-button mdl-button--raised" disabled id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
 
   <button class="mdl-button mdl-js-button mdl-button--raised" id="viewOrders" style="float:right">回首頁</button>
 
@@ -214,6 +314,8 @@
      <option value="http://www.wretch.cc">無名</option>
     <optgroup label="已結帳"> -->
   </select>
+
+    <button id="dtnDelOrder"><i class="ui-icon ui-icon-trash-b"></i></button>
 
     <select id="testSelect" class="image-picker show-html" multiple="multiple">
     </select>
