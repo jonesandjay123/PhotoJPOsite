@@ -41,13 +41,34 @@
       if (firebase.auth().currentUser) {
 
         firebase.auth().signOut(); //執行登出
-
         window.location.href = "email-password.html"; //跳轉
       }
     }
 
     function goMyOrderLists(){
       window.location.href = "homepage.html";
+    }
+
+    //根據orderID來畫圖
+    function showSelectedOrderPics(orderID){
+      //在userImg中讀取屬於uid的圖片
+      const orderImgs = firebase.database().ref("orderImg/"+orderID);
+
+      orderImgs.on("value", snapshot =>{
+
+        $("#testSelect").empty(); //先清空。
+
+        snapshot.forEach(function(data) {
+              $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+              $("#testSelect").imagepicker({
+                //hide_select : false,
+                show_label  : true,
+                limit: 4,
+                limit_reached: function(){alert('最多僅可選擇4項!')}
+              });
+        });
+      });
+
     }
 
 	   //初始化
@@ -113,34 +134,12 @@
             });
             gtpUnpaid.appendTo($("#userOrderList"));
             gtpPaid.appendTo($("#userOrderList"));
+
+            showSelectedOrderPics($( "#userOrderList option:selected" ).text());
          });
 
 
-         /*
-         //在userImg中讀取屬於uid的圖片
-         const userImgs = firebase.database().ref("userImg/"+uid);
 
-         userImgs.on("value", snapshot =>{
-
-           var index = 1;
-
-           $("#testSelect").empty(); //先清空。
-
-           snapshot.forEach(function(data) {
-                 //console.log("圖片pid: " + data.key + ": "+data.val());
-
-                 $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
-                 $("select").imagepicker({
-                   //hide_select : false,
-                   show_label  : true,
-                   limit: 4,
-                   limit_reached: function(){alert('最多僅可選擇4項!')}
-                 });
-
-                 index++;
-           });
-         });
-         */
         }
         else
         {
@@ -156,7 +155,6 @@
         document.getElementById('quickstart-sign-in').disabled = false;
 
     });
-
 
 	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
     document.getElementById('viewOrders').addEventListener('click', goMyOrderLists, false);
@@ -207,7 +205,7 @@
 
   <hr>
 
-  <select id="userOrderList" onchange="alert(this.options[this.selectedIndex].value)">
+  <select id="userOrderList" onchange="showSelectedOrderPics(this.options[this.selectedIndex].value)">
     <!-- <optgroup label="未結帳">
      <option value="http://tw.yahoo.com">yahoo網頁</option>
      <option value="http://www.google.com">google網頁</option>
@@ -217,8 +215,8 @@
     <optgroup label="已結帳"> -->
   </select>
 
-    <!-- <select id="testSelect" class="image-picker show-html" multiple="multiple">
-    </select> -->
+    <select id="testSelect" class="image-picker show-html" multiple="multiple">
+    </select>
 
 
 	<!-- <pre><code id="quickstart-account-details">null</code></pre> -->
