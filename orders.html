@@ -115,49 +115,12 @@
             alert("order: "+orderID + " 移除時發生錯誤!", error);
          });
 
-         /*
-          //在userOrder中讀取屬於uid的訂單
-          const userOrders = firebase.database().ref("userOrder/"+uid);
-
-          userOrders.on("value", snapshot =>{
-            var unpaidList = new Array(); //未結帳的
-            var paidList = new Array();   //已結帳的
-
-            snapshot.forEach(function(data) {
-               //console.log("圖片pid: " + data.key + ": "+data.val());
-               if(data.val()){
-                 paidList.push(data.key);
-               }
-               else{
-                 unpaidList.push(data.key);
-               }
-            });
-
-            $("#userOrderList").empty(); //先清空。
-             var opt = document.createElement('option');
-
-             //未結帳的
-             var gtpUnpaid = $('<optgroup label="未結帳" />');
-             unpaidList.forEach(function(element) {
-               $('<option />').html(element).appendTo(gtpUnpaid);
-             });
-             //已結帳的
-             var gtpPaid = $('<optgroup label="已結帳" />');
-             paidList.forEach(function(element) {
-                $('<option />').html(element).appendTo(gtpPaid);
-             });
-             gtpUnpaid.appendTo($("#userOrderList"));
-             gtpPaid.appendTo($("#userOrderList"));
-
-             showSelectedOrderPics($( "#userOrderList option:selected" ).text());
-          });
-          */
          }
-         else
-         {
-           //如果使用者是未登入的狀態，直接登出
-           window.location.href = "email-password.html";
-         }
+       else
+       {
+         //如果使用者是未登入的狀態，直接登出
+         window.location.href = "email-password.html";
+       }
      });
 
 
@@ -187,7 +150,6 @@
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
 //document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
 
-
          console.log("登入者的uid: "+uid);
 
          //在userOrder中讀取屬於uid的訂單
@@ -196,9 +158,7 @@
          userOrders.on("value", snapshot =>{
 
            if(!snapshot.exists()){
-             $( "#userOrderList" ).hide();
-             $( "#dtnDelOrder" ).hide();
-             $( "#testSelect" ).hide();
+             $( "#drawPannel" ).hide();
              $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
            }
 
@@ -237,8 +197,6 @@
 
             showSelectedOrderPics($( "#userOrderList option:selected" ).text());
          });
-
-
 
         }
         else
@@ -305,25 +263,27 @@
 
   <hr>
 
-  <select id="userOrderList" onchange="showSelectedOrderPics(this.options[this.selectedIndex].value)">
-    <!-- <optgroup label="未結帳">
-     <option value="http://tw.yahoo.com">yahoo網頁</option>
-     <option value="http://www.google.com">google網頁</option>
-     <option value="http://www.youtube.com/">Youtbue</option>
-     <option value="http://www.pixnet.net/">pixnet</option>
-     <option value="http://www.wretch.cc">無名</option>
-    <optgroup label="已結帳"> -->
-  </select>
+  <div id="drawPannel">
 
-    <button id="dtnDelOrder"><i class="ui-icon ui-icon-trash-b"></i></button>
-
-    <select id="testSelect" class="image-picker show-html" multiple="multiple">
+    <select id="userOrderList" onchange="showSelectedOrderPics(this.options[this.selectedIndex].value)">
+      <!-- <optgroup label="未結帳">
+       <option value="http://tw.yahoo.com">yahoo網頁</option>
+       <option value="http://www.google.com">google網頁</option>
+       <option value="http://www.youtube.com/">Youtbue</option>
+       <option value="http://www.pixnet.net/">pixnet</option>
+       <option value="http://www.wretch.cc">無名</option>
+      <optgroup label="已結帳"> -->
     </select>
 
+      <button id="dtnDelOrder"><i class="ui-icon ui-icon-trash-b"></i></button>
 
-	<!-- <pre><code id="quickstart-account-details">null</code></pre> -->
+      <select id="testSelect" class="image-picker show-html" multiple="multiple">
+      </select>
 
 
+    <!-- <pre><code id="quickstart-account-details">null</code></pre> -->
+
+  <div>
   </main>
 </div>
 
