@@ -51,8 +51,16 @@
       window.location.href = "homepage.html";
     }
 
-    function callJavascriptFunction(){
-      alert("按下按鈕~");
+    //將圖片從訂單中移除
+    function removePicture(obj){
+      var pic = obj.id;
+
+      var r = confirm("是否確定要圖片: "+pic+" 移除?");
+      if (r == false) {
+        return;
+      }
+      console.log("移除~"+pic);
+
     }
 
     //根據orderID來畫圖
@@ -64,7 +72,7 @@
 
         $("#testSelect").empty(); //先清空。
         snapshot.forEach(function(data) {
-              $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+              $("#testSelect").append("<option class='dynamicPicTag' data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
               $("#testSelect").imagepicker({
                 //hide_select : false,
                 //show_label  : true,
@@ -75,15 +83,21 @@
 
         //在每個圖片的DIV裡面加上一個按鈕
         var elems =  document.getElementsByClassName("thumbnail dynamicAppendPic");
+        var picTag =  document.getElementsByClassName("dynamicPicTag");
 
         for (i = 0; i < elems.length; i++) {
             var ele = elems[i];
 
-            var btn = document.createElement("BUTTON");
-            var t = document.createTextNode("CLICK ME");
-            btn.setAttribute("style","color:red;font-size:23px");
-            btn.onclick = callJavascriptFunction;
-            btn.appendChild(t);
+            var pid = picTag[i].textContent; //利用imagepicker選項裡的相對位置來取得圖片ID
+
+            var btn = document.createElement("button");
+            var labeli = document.createElement("i");
+            labeli.setAttribute("class", "ui-icon ui-icon-closethick");
+            btn.setAttribute("id",pid);
+            //btn.setAttribute("style","color:red;font-size:23px");
+            btn.setAttribute("style","background-color: Transparent;border-radius: 100%; position: relative; float:right;");
+            btn.setAttribute('onClick', 'removePicture(this)');
+            btn.appendChild(labeli);
 
             ele.appendChild(btn);
         }
@@ -255,7 +269,6 @@
 
       //https://rvera.github.io/image-picker/
       //$("select").imagepicker({limit: 2});
-
     };
   </script>
 </head>
