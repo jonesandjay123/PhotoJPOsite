@@ -51,6 +51,10 @@
       window.location.href = "homepage.html";
     }
 
+    function callJavascriptFunction(){
+      alert("按下按鈕~");
+    }
+
     //根據orderID來畫圖
     function showSelectedOrderPics(orderID){
       //在userImg中讀取屬於uid的圖片
@@ -68,6 +72,22 @@
                 limit_reached: function(){alert('最多僅可選擇4項!')}
               });
         });
+
+        //在每個圖片的DIV裡面加上一個按鈕
+        var elems =  document.getElementsByClassName("thumbnail dynamicAppendPic");
+
+        for (i = 0; i < elems.length; i++) {
+            var ele = elems[i];
+
+            var btn = document.createElement("BUTTON");
+            var t = document.createTextNode("CLICK ME");
+            btn.setAttribute("style","color:red;font-size:23px");
+            btn.onclick = callJavascriptFunction;
+            btn.appendChild(t);
+
+            ele.appendChild(btn);
+        }
+
       });
     }
 
