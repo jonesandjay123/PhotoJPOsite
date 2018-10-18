@@ -320,8 +320,6 @@
 
          userImgs.on("value", snapshot =>{
 
-           var index = 1;
-
            $("#testSelect").empty(); //先清空。
 
            snapshot.forEach(function(data) {
@@ -334,8 +332,6 @@
                    limit: 4,
                    limit_reached: function(){alert('最多僅可選擇4項!')}
                  });
-
-                 index++;
            });
          });
 
