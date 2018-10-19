@@ -29,7 +29,9 @@
   <script src="init.js"></script>
   <link rel="stylesheet" type="text/css" href="dist/jquery-ui.icon-font.min.css" />
   <link rel="stylesheet" type="text/css" href="dist/jquery-ui-1.12.icon-font.min.css" />
+  <link rel="stylesheet" href="dist/jquery.modal.min.css" />
   <script src="dist/jquery-3.3.1.slim.min.js"></script>
+  <script src="dist/jquery.modal.min.js"></script>
 
   <link rel="stylesheet" href="image-picker/image-picker.css">
   <script src="image-picker/image-picker.min.js"></script>
@@ -51,7 +53,13 @@
 
     //在訂單中，額外新增一張圖片
     function addPicture(){
-      alert("新增圖片~");
+      //alert("新增圖片~");
+      $("#ex1").modal({
+        escapeClose: false
+        //,
+        //clickClose: false,
+        //showClose: false
+      });
     }
 
     //將圖片從訂單中移除
@@ -368,6 +376,13 @@
 
       <select id="testSelect" class="image-picker show-html" multiple="multiple">
       </select>
+
+
+      <!-- Modal HTML embedded directly into document -->
+      <div id="ex1" class="modal">
+        <p>Thanks for clicking. That felt good.</p>
+        <a href="#" rel="modal:close">Close</a>
+      </div>
 
 
     <!-- <pre><code id="quickstart-account-details">null</code></pre> -->
