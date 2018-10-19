@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <style>
@@ -8,7 +7,6 @@
      max-width: 300px;
 }
 </style>
-
 
 <head>
   <meta charset=utf-8 />
@@ -88,14 +86,15 @@
         for (i = 0; i < elems.length; i++) {
             var ele = elems[i];
 
+            ele.setAttribute("style", "position: relative;"); //要加這個，待會的btn才能順利使用absolute position
             var pid = picTag[i].textContent; //利用imagepicker選項裡的相對位置來取得圖片ID
-
             var btn = document.createElement("button");
             var labeli = document.createElement("i");
             labeli.setAttribute("class", "ui-icon ui-icon-closethick");
             btn.setAttribute("id",pid);
-            //btn.setAttribute("style","color:red;font-size:23px");
-            btn.setAttribute("style","background-color: Transparent;border-radius: 100%; position: relative; float:right;");
+            btn.setAttribute("style","color:gray;background-color: Transparent;border-radius: 100%; position: absolute; top:3%; right:3%");
+            btn.onmouseover = function() {this.style.color = "black";}
+            btn.onmouseout = function() {this.style.color = "gray";}
             btn.setAttribute('onClick', 'removePicture(this)');
             btn.appendChild(labeli);
 
