@@ -59,12 +59,47 @@
       winWid = winWid*0.8;
       var winHig = $( window ).height();
       winHig = winHig*0.75;
-      $("#ex1").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
-      $("#ex1").modal();
+      $("#outerModal").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
+      $("#innerModal").css({"height": winHig+"px", "max-height": winHig+"px"});
+      $("#outerModal").modal();
+      showUserAllUpdated();
+    }
 
+    //讀取使用者所有上傳過的照片
+    function showUserAllUpdated(){
 
+      //登入驗證
+     firebase.auth().onAuthStateChanged(function(user) {
+
+       if (user) {
+         var uid = user.uid;
+        console.log("登入者的uid: "+uid);
+
+        //在userImg中讀取屬於uid的圖片
+        const userImgs = firebase.database().ref("userImg/"+uid);
+
+        userImgs.on("value", snapshot =>{
+
+          $("#modalPSelect").empty(); //先清空。
+
+          snapshot.forEach(function(data) {
+                //console.log("圖片pid: " + data.key + ": "+data.val());
+                $("#modalPSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                $("#modalPSelect").imagepicker();
+              });
+            });
+
+           }
+           else{
+             //如果使用者是未登入的狀態，直接登出
+             window.location.href = "email-password.html";
+           }
+
+       });
 
     }
+
+
 
     //將圖片從訂單中移除
     function removePicture(obj){
@@ -148,11 +183,12 @@
         var picTag =  document.getElementsByClassName("dynamicPicTag");
 
         //如果圖片小於4張，就會有一個可以新增圖片的按鈕在後面。
-        if(elems.length <4){
+        if(picTag.length <4){
           appendAddPicPannel(); //在項面區塊後面接上上傳照片用的按鈕
         }
 
-        for (i = 0; i < elems.length; i++) {
+        //迴圈本體的參考值使用picTag.length而非elems.length，因為elems.length長度會受modal裡面圖片的影響
+        for (i = 0; i < picTag.length; i++) {
             var ele = elems[i];
 
             ele.setAttribute("style", "position: relative;"); //要加這個，待會的btn才能順利使用absolute position
@@ -379,9 +415,12 @@
       </select>
 
 
-      <!-- Modal HTML embedded directly into document -->
-      <div id="ex1" class="modal">
-        <select id="modalPicSelect" class="image-picker show-html" multiple="multiple"></select>
+      <!-- Modal HTML embedded directly into document http://jquerymodal.com/ -->
+      <div id="outerModal" class="modal" style="position: relative; overflow: hidden">
+        <div id="innerModal" style="overflow-y: scroll">
+          <select id="modalPSelect" class="image-picker show-html"></select>
+          <button id="addToOrder" style="position: absolute; top:90%; right:5%">加入圖片<i class="ui-icon ui-icon-cart"></i></button>
+        </div>
       </div>
 
 
