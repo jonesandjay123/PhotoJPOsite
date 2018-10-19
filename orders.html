@@ -49,16 +49,59 @@
       window.location.href = "homepage.html";
     }
 
+    //在訂單中，額外新增一張圖片
+    function addPicture(){
+      alert("新增圖片~");
+    }
+
     //將圖片從訂單中移除
     function removePicture(obj){
       var pic = obj.id;
 
-      var r = confirm("是否確定要圖片: "+pic+" 移除?");
+      var r = confirm("是否確定要將圖片從訂單中移除?");
       if (r == false) {
         return;
       }
-      console.log("移除~"+pic);
+      var orderID = $("#userOrderList option:selected").text();
 
+      console.log("移除訂單:"+orderID+" 中的照片:"+pic);
+
+      //登入驗證
+      firebase.auth().onAuthStateChanged(function(user) {
+
+        // [END_EXCLUDE]
+        if (user) {
+          // User is signed in.
+          var uid = user.uid;
+
+          //移除orderImg中的訂單
+          firebase.database().ref('orderImg/' + orderID + '/' +pic).remove().then(function() {
+             console.log("orderImg: "+orderID + " 移除成功!");
+          }).catch(function(error) {
+             alert("orderImg: "+orderID + " 移除時發生錯誤!", error);
+          });
+
+          }
+        else
+        {
+          //如果使用者是未登入的狀態，直接登出
+          window.location.href = "email-password.html";
+        }
+      });
+
+    }
+
+    //在項面區塊後面接上上傳照片用的按鈕
+    function appendAddPicPannel(){
+      $(".image_picker_selector").append("<li><div><button id='addPicbtn' style='color:gray;background-color:Transparent;border-radius:20%;'><i class='ui-icon ui-icon-circlesmall-plus' style='font-size: 8em;'></i></button></div></li>");
+      $( "#addPicbtn" ).hover(
+        function() {
+          $( this ).css({color: 'black'});
+        },
+        function() {
+          $( this ).css({color: 'gray'});
+      });
+      document.getElementById("addPicbtn").setAttribute('onClick', 'addPicture()');
     }
 
     //根據orderID來畫圖
@@ -67,21 +110,35 @@
       const orderImgs = firebase.database().ref("orderImg/"+orderID);
 
       orderImgs.on("value", snapshot =>{
-
         $("#testSelect").empty(); //先清空。
+
+         //先驗看看snapshot2當中是不是已經沒有資料了 也可以寫: !snapshot.exists()
+         if(snapshot.numChildren() == 0){
+           console.log("snapshot是空的，直接跳過~");
+           $(".image_picker_selector").empty();
+           appendAddPicPannel(); //在項面區塊後面接上上傳照片用的按鈕
+           return;
+         }
+
         snapshot.forEach(function(data) {
               $("#testSelect").append("<option class='dynamicPicTag' data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
               $("#testSelect").imagepicker({
                 //hide_select : false,
                 //show_label  : true,
-                limit: 4,
-                limit_reached: function(){alert('最多僅可選擇4項!')}
+                limit: 1
+                //,limit_reached: function(){alert('最多僅可選擇4項!')}
               });
         });
+
 
         //在每個圖片的DIV裡面加上一個按鈕
         var elems =  document.getElementsByClassName("thumbnail dynamicAppendPic");
         var picTag =  document.getElementsByClassName("dynamicPicTag");
+
+        //如果圖片小於4張，就會有一個可以新增圖片的按鈕在後面。
+        if(elems.length <4){
+          appendAddPicPannel(); //在項面區塊後面接上上傳照片用的按鈕
+        }
 
         for (i = 0; i < elems.length; i++) {
             var ele = elems[i];
@@ -92,7 +149,7 @@
             var labeli = document.createElement("i");
             labeli.setAttribute("class", "ui-icon ui-icon-closethick");
             btn.setAttribute("id",pid);
-            btn.setAttribute("style","color:gray;background-color: Transparent;border-radius: 100%; position: absolute; top:3%; right:3%");
+            btn.setAttribute("style","color:gray;background-color:Transparent;border-radius:100%; position: absolute; top:3%; right:3%");
             btn.onmouseover = function() {this.style.color = "black";}
             btn.onmouseout = function() {this.style.color = "gray";}
             btn.setAttribute('onClick', 'removePicture(this)');
@@ -113,7 +170,7 @@
         return;
       }
 
-      //登入驗證
+     //登入驗證
      firebase.auth().onAuthStateChanged(function(user) {
 
        // [END_EXCLUDE]
