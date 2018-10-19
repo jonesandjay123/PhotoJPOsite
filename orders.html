@@ -61,6 +61,9 @@
       winHig = winHig*0.75;
       $("#ex1").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
       $("#ex1").modal();
+
+
+
     }
 
     //將圖片從訂單中移除
@@ -119,8 +122,8 @@
       const orderImgs = firebase.database().ref("orderImg/"+orderID);
 
       orderImgs.on("value", snapshot =>{
-        $("#testSelect").empty(); //先清空。
-        $("#testSelect").imagepicker({limit: 1}); //empty以後要有這一行才有效
+        $("#picSelect").empty(); //先清空。
+        $("#picSelect").imagepicker({limit: 1}); //empty以後要有這一行才有效
          //先驗看看snapshot2當中是不是已經沒有資料了 也可以寫: !snapshot.exists()
          if(snapshot.numChildren() == 0){
            console.log("snapshot是空的，直接跳過~");
@@ -130,8 +133,8 @@
          }
 
         snapshot.forEach(function(data) {
-              $("#testSelect").append("<option class='dynamicPicTag' data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
-              $("#testSelect").imagepicker({
+              $("#picSelect").append("<option class='dynamicPicTag' data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+              $("#picSelect").imagepicker({
                 //hide_select : false,
                 //show_label  : true,
                 limit: 1
@@ -372,15 +375,13 @@
 
       <button id="dtnDelOrder"><i class="ui-icon ui-icon-trash-b"></i></button>
 
-      <select id="testSelect" class="image-picker show-html" multiple="multiple">
+      <select id="picSelect" class="image-picker show-html" multiple="multiple">
       </select>
 
 
       <!-- Modal HTML embedded directly into document -->
       <div id="ex1" class="modal">
-        <p>Thanks for clicking. That felt good.</p>
-        <p>Thanks for clicking. That felt good.</p>
-        <!-- <a href="#" rel="modal:close">Close</a> -->
+        <select id="modalPicSelect" class="image-picker show-html" multiple="multiple"></select>
       </div>
 
 

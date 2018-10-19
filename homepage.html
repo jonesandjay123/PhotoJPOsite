@@ -193,7 +193,7 @@
     //圖片訂單群組
     function sendSelection(){
 
-      if($("#testSelect :selected").length == 0){
+      if($("#picSelect :selected").length == 0){
         alert("您未選取任何項目!");
         return;
       }
@@ -251,7 +251,7 @@
 
          var inputObj3 = {};
 
-        $('#testSelect :selected').each(function(i, selectedElement) {
+        $('#picSelect :selected').each(function(i, selectedElement) {
            //console.log($(selectedElement).val() + "  " +$(selectedElement).text());
            var pid = $(selectedElement).text();
            var url = $(selectedElement).val();
@@ -320,12 +320,12 @@
 
          userImgs.on("value", snapshot =>{
 
-           $("#testSelect").empty(); //先清空。
+           $("#picSelect").empty(); //先清空。
 
            snapshot.forEach(function(data) {
                  //console.log("圖片pid: " + data.key + ": "+data.val());
 
-                 $("#testSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                 $("#picSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
                  $("select").imagepicker({
                    //hide_select : false,
                    //show_label  : true,
@@ -409,7 +409,7 @@
   <hr>
 
 
-    <select id="testSelect" class="image-picker show-html" multiple="multiple">
+    <select id="picSelect" class="image-picker show-html" multiple="multiple">
       <!-- <option data-img-src="http://placekitten.com/220/200" value="1">Cute Kitten 1</option>
       <option data-img-src="http://placekitten.com/180/200" value="2">Cute Kitten 2</option>
       <option data-img-src="http://placekitten.com/130/200" value="3">Cute Kitten 3</option>
