@@ -54,12 +54,13 @@
     //在訂單中，額外新增一張圖片
     function addPicture(){
       //alert("新增圖片~");
-      $("#ex1").modal({
-        escapeClose: false
-        //,
-        //clickClose: false,
-        //showClose: false
-      });
+
+      var winWid = $( window ).width();
+      winWid = winWid*0.8;
+      var winHig = $( window ).height();
+      winHig = winHig*0.75;
+      $("#ex1").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
+      $("#ex1").modal();
     }
 
     //將圖片從訂單中移除
@@ -109,7 +110,7 @@
         function() {
           $( this ).css({color: 'gray'});
       });
-      document.getElementById("addPicbtn").setAttribute('onClick', 'addPicture()');
+      $( "#addPicbtn" ).attr('onClick', 'addPicture()');
     }
 
     //根據orderID來畫圖
@@ -119,7 +120,7 @@
 
       orderImgs.on("value", snapshot =>{
         $("#testSelect").empty(); //先清空。
-
+        $("#testSelect").imagepicker({limit: 1}); //empty以後要有這一行才有效
          //先驗看看snapshot2當中是不是已經沒有資料了 也可以寫: !snapshot.exists()
          if(snapshot.numChildren() == 0){
            console.log("snapshot是空的，直接跳過~");
@@ -330,9 +331,6 @@
     //初始化執行緒
     window.onload = function() {
       initApp();
-
-      //https://rvera.github.io/image-picker/
-      //$("select").imagepicker({limit: 2});
     };
   </script>
 </head>
@@ -381,7 +379,8 @@
       <!-- Modal HTML embedded directly into document -->
       <div id="ex1" class="modal">
         <p>Thanks for clicking. That felt good.</p>
-        <a href="#" rel="modal:close">Close</a>
+        <p>Thanks for clicking. That felt good.</p>
+        <!-- <a href="#" rel="modal:close">Close</a> -->
       </div>
 
 
