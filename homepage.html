@@ -315,6 +315,22 @@
 
          console.log("登入者的uid: "+uid);
 
+
+         //如果使用者是administrator，就要開啟隱藏頁面的按鈕
+         const userTable = firebase.database().ref("user/"+uid);
+         userTable.on("value", snapshot =>{
+           snapshot.forEach(function(data) {
+                if(data.key=='administrator' && data.val()==true){
+                  console.log("標頭: " + data.key + ": "+data.val());
+
+                  var r= $('<a href="allUsersOrders.html"><input type="button" value="會員訂單一覽" /></a>');
+                  r.insertAfter( $( '#viewOrders' ) );
+
+                }
+           });
+         });
+
+
          //在userImg中讀取屬於uid的圖片
          const userImgs = firebase.database().ref("userImg/"+uid);
 

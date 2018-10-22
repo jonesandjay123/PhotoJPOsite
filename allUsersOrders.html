@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+/* Style the buttons */
+.dynamicAppendPic {
+     max-width: 300px;
+}
+</style>
+
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="aD3fKiDVrsnXJ8m47IC2qMrJxCGn4nHNl4LX-Hnoeb8" />
+  <title>登入頁面</title>
+
+  <!-- Material Design Theming -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <link rel="stylesheet" href="main.css">
+
+  <!-- Import and configure the Firebase SDK -->
+  <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+  <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+
+  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+  <script src="init.js"></script>
+  <link rel="stylesheet" type="text/css" href="dist/jquery-ui.icon-font.min.css" />
+  <link rel="stylesheet" type="text/css" href="dist/jquery-ui-1.12.icon-font.min.css" />
+  <link rel="stylesheet" href="dist/jquery.modal.min.css" />
+  <script src="dist/jquery-3.3.1.slim.min.js"></script>
+  <script src="dist/jquery.modal.min.js"></script>
+
+  <link rel="stylesheet" href="image-picker/image-picker.css">
+  <script src="image-picker/image-picker.min.js"></script>
+
+  <script type="text/javascript">
+
+	  //登出鈕
+    function toggleSignIn() {
+      if (firebase.auth().currentUser) {
+
+        firebase.auth().signOut(); //執行登出
+        window.location.href = "index.html"; //跳轉
+      }
+    }
+
+    function goMyOrderLists(){
+      window.location.href = "homepage.html";
+    }
+
+    //在訂單中，額外新增一張圖片
+    function addPicture(){
+      //alert("新增圖片~");
+
+      var winWid = $( window ).width();
+      winWid = winWid*0.8;
+      var winHig = $( window ).height();
+      winHig = winHig*0.75;
+      $("#outerModal").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
+      $("#innerModal").css({"height": winHig+"px", "max-height": winHig+"px"});
+      $("#outerModal").modal();
+
+      var displayPicID = new Array(); //已經存在的圖片清單
+      $("#picSelect option").each(function()
+      {
+          displayPicID.push($(this).text()); //已經存在的圖片存進Array
+      });
+
+      showUserAllUpdated(displayPicID);
+    }
+
+    //讀取使用者所有上傳過的照片
+    function showUserAllUpdated(displayPicID){
+
+      //登入驗證
+     firebase.auth().onAuthStateChanged(function(user) {
+
+       if (user) {
+         var uid = user.uid;
+
+        //在userImg中讀取屬於uid的圖片
+        const userImgs = firebase.database().ref("userImg/"+uid);
+
+        userImgs.on("value", snapshot =>{
+
+          $("#modalPSelect").empty(); //先清空。
+
+          snapshot.forEach(function(data) {
+                //確保要串進去的圖片，不存在displayPicID中(因為已經有的圖片就不提供再次選擇)
+                if(!displayPicID.includes(data.key)){
+                  //console.log("圖片pid: " + data.key + ": "+data.val());
+                  $("#modalPSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                  $("#modalPSelect").imagepicker();
+                }
+              });
+            });
+
+           }
+           else{
+             //如果使用者是未登入的狀態，直接登出
+             window.location.href = "index.html";
+           }
+
+       });
+
+    }
+
+    function closeModal(){
+
+      //如果至少有一張圖片被選中，才繼續做圖片相關的動作。
+      if($('#modalPSelect :selected').length > 0){
+
+        //登入驗證
+        firebase.auth().onAuthStateChanged(function(user) {
+
+          if (user) {
+            var uid = user.uid;
+            var orderID = $("#userOrderList option:selected").text();
+            var inputObj = {};
+
+            //選中的圖片存進inputObj
+            $('#modalPSelect :selected').each(function(i, selectedElement) {
+               //console.log($(selectedElement).val() + "  " +$(selectedElement).text());
+               var pid = $(selectedElement).text();
+               var url = $(selectedElement).val();
+               inputObj[pid] = url;
+            });
+
+            //在orderImg中加入新的圖片，必須使用update(而非set)，否則會蓋掉上一筆的紀錄!!
+            firebase.database().ref("orderImg/"+orderID).update(inputObj,function(error){
+              if(error){
+                alert("orderImg"+orderID+"的資料寫入失敗!");
+                console.log("orderImg"+orderID+"的資料寫入失敗! error: " + error);
+              }
+              else{
+                console.log("orderImg"+orderID+" 資料寫入成功!");
+              }
+            });
+
+            }
+          else
+          {
+            //如果使用者是未登入的狀態，直接登出
+            window.location.href = "index.html";
+          }
+        });
+
+
+      }
+      $.modal.close(); //關閉Modal
+    }
+
+
+    //將圖片從訂單中移除
+    function removePicture(obj){
+      var pic = obj.id;
+
+      var r = confirm("是否確定要將圖片從訂單中移除?");
+      if (r == false) {
+        return;
+      }
+      var orderID = $("#userOrderList option:selected").text();
+
+      console.log("移除訂單:"+orderID+" 中的照片:"+pic);
+
+      //登入驗證
+      firebase.auth().onAuthStateChanged(function(user) {
+
+        // [END_EXCLUDE]
+        if (user) {
+          // User is signed in.
+          var uid = user.uid;
+
+          //移除orderImg中的訂單
+          firebase.database().ref('orderImg/' + orderID + '/' +pic).remove().then(function() {
+             console.log("orderImg: "+orderID + " 移除成功!");
+          }).catch(function(error) {
+             alert("orderImg: "+orderID + " 移除時發生錯誤!", error);
+          });
+
+          }
+        else
+        {
+          //如果使用者是未登入的狀態，直接登出
+          window.location.href = "index.html";
+        }
+      });
+
+    }
+
+    //在項面區塊後面接上上傳照片用的按鈕
+    function appendAddPicPannel(){
+      $(".image_picker_selector").append("<li><div><button id='addPicbtn' style='color:gray;background-color:Transparent;border-radius:20%;'><i class='ui-icon ui-icon-circlesmall-plus' style='font-size: 8em;'></i></button></div></li>");
+      $( "#addPicbtn" ).hover(
+        function() {
+          $( this ).css({color: 'black'});
+        },
+        function() {
+          $( this ).css({color: 'gray'});
+      });
+      $( "#addPicbtn" ).attr('onClick', 'addPicture()');
+    }
+
+    //根據orderID來畫圖
+    function showSelectedOrderPics(orderID){
+      //在userImg中讀取屬於uid的圖片
+      const orderImgs = firebase.database().ref("orderImg/"+orderID);
+
+      orderImgs.on("value", snapshot =>{
+        $("#picSelect").empty(); //先清空。
+        $("#picSelect").imagepicker({limit: 1}); //empty以後要有這一行才有效
+         //先驗看看snapshot2當中是不是已經沒有資料了 也可以寫: !snapshot.exists()
+         if(snapshot.numChildren() == 0){
+           console.log("snapshot是空的，直接跳過~");
+           $(".image_picker_selector").empty();
+           appendAddPicPannel(); //在項面區塊後面接上上傳照片用的按鈕
+           return;
+         }
+
+        snapshot.forEach(function(data) {
+              $("#picSelect").append("<option class='dynamicPicTag' data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+              $("#picSelect").imagepicker({
+                //hide_select : false,
+                //show_label  : true,
+                limit: 1
+                //,limit_reached: function(){alert('最多僅可選擇4項!')}
+              });
+        });
+
+
+        //在每個圖片的DIV裡面加上一個按鈕
+        var elems =  document.getElementsByClassName("thumbnail dynamicAppendPic");
+        var picTag =  document.getElementsByClassName("dynamicPicTag");
+
+        //如果圖片小於4張，就會有一個可以新增圖片的按鈕在後面。
+        if(picTag.length <4){
+          appendAddPicPannel(); //在項面區塊後面接上上傳照片用的按鈕
+        }
+
+        //迴圈本體的參考值使用picTag.length而非elems.length，因為elems.length長度會受modal裡面圖片的影響
+        for (i = 0; i < picTag.length; i++) {
+            var ele = elems[i];
+
+            ele.setAttribute("style", "position: relative;"); //要加這個，待會的btn才能順利使用absolute position
+            var pid = picTag[i].textContent; //利用imagepicker選項裡的相對位置來取得圖片ID
+            var btn = document.createElement("button");
+            var labeli = document.createElement("i");
+            labeli.setAttribute("class", "ui-icon ui-icon-closethick");
+            btn.setAttribute("id",pid);
+            btn.setAttribute("style","color:gray;background-color:Transparent;border-radius:100%; position: absolute; top:3%; right:3%");
+            btn.onmouseover = function() {this.style.color = "black";}
+            btn.onmouseout = function() {this.style.color = "gray";}
+            btn.setAttribute('onClick', 'removePicture(this)');
+            btn.appendChild(labeli);
+
+            ele.appendChild(btn);
+        }
+
+      });
+    }
+
+    //刪除訂單
+    function deleteOrder(){
+      var orderID = $("#userOrderList option:selected").text();
+
+      var r = confirm("您是否確定要刪除 "+orderID+" 這筆訂單?");
+      if (r == false) {
+        return;
+      }
+
+     //登入驗證
+     firebase.auth().onAuthStateChanged(function(user) {
+
+       // [END_EXCLUDE]
+       if (user) {
+         // User is signed in.
+         var displayName = user.displayName;
+         var email = user.email;
+         var emailVerified = user.emailVerified;
+         var photoURL = user.photoURL;
+         var isAnonymous = user.isAnonymous;
+         var uid = user.uid;
+         var providerData = user.providerData;
+
+         console.log("登入者的uid: "+uid);
+
+         //移除userOrder中的訂單
+         firebase.database().ref('userOrder/' + uid + '/' + orderID).remove().then(function() {
+            console.log("userOrder: "+uid + " 移除成功!");
+         }).catch(function(error) {
+            alert("userOrder: "+uid + " 移除時發生錯誤!", error);
+         });
+         //移除orderImg中的訂單
+         firebase.database().ref('orderImg/' + orderID).remove().then(function() {
+            console.log("orderImg: "+orderID + " 移除成功!");
+         }).catch(function(error) {
+            alert("orderImg: "+orderID + " 移除時發生錯誤!", error);
+         });
+         //移除order中的訂單
+         firebase.database().ref('order/' + orderID).remove().then(function() {
+            console.log("order: "+orderID + " 移除成功!");
+         }).catch(function(error) {
+            alert("order: "+orderID + " 移除時發生錯誤!", error);
+         });
+
+         }
+       else
+       {
+         //如果使用者是未登入的狀態，直接登出
+         window.location.href = "index.html";
+       }
+     });
+
+
+    }
+
+	   //初始化
+    function initApp() {
+      console.log("已登入homepage");
+
+	     //登入驗證
+      firebase.auth().onAuthStateChanged(function(user) {
+
+        // [END_EXCLUDE]
+        if (user) {
+          // User is signed in.
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+
+          document.getElementById('loginEmaildisplay').textContent = email;
+
+          //元件初始化
+          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+//document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+
+         console.log("登入者的uid: "+uid);
+
+         //在userOrder中讀取屬於uid的訂單
+         const userOrders = firebase.database().ref("userOrder/"+uid);
+
+         userOrders.on("value", snapshot =>{
+
+           if(!snapshot.exists()){
+             $( "#drawPannel" ).hide();
+             $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
+           }
+
+           var unpaidList = new Array(); //未結帳的
+           var paidList = new Array();   //已結帳的
+
+           snapshot.forEach(function(data) {
+              //console.log("圖片pid: " + data.key + ": "+data.val());
+              if(data.val()){
+                paidList.push(data.key);
+              }
+              else{
+                unpaidList.push(data.key);
+              }
+           });
+
+           $("#userOrderList").empty(); //先清空。
+            var opt = document.createElement('option');
+
+            //讓陣列反轉，達到最新的排在清單最上面的效果。
+            paidList.reverse();
+            unpaidList.reverse();
+
+            //未結帳的
+            var gtpUnpaid = $('<optgroup label="未結帳" />');
+            unpaidList.forEach(function(element) {
+              $('<option />').html(element).appendTo(gtpUnpaid);
+            });
+            //已結帳的
+            var gtpPaid = $('<optgroup label="已結帳" />');
+            paidList.forEach(function(element) {
+               $('<option />').html(element).appendTo(gtpPaid);
+            });
+            gtpUnpaid.appendTo($("#userOrderList"));
+            gtpPaid.appendTo($("#userOrderList"));
+
+            showSelectedOrderPics($( "#userOrderList option:selected" ).text());
+         });
+
+        }
+        else
+        {
+          // User is signed out.
+          // [START_EXCLUDE]
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+          //document.getElementById('quickstart-account-details').textContent = 'null';
+
+          //如果使用者是未登入的狀態，直接登出
+	        window.location.href = "index.html";
+
+        }
+        document.getElementById('quickstart-sign-in').disabled = false;
+
+    });
+
+	  document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+    document.getElementById('viewOrders').addEventListener('click', goMyOrderLists, false);
+    document.getElementById('dtnDelOrder').addEventListener('click', deleteOrder, false);
+
+    }
+
+    //生成uid的方法
+    function uuidv4() {
+      return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+      //return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    //初始化執行緒
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</head>
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+  <!-- Header section containing title -->
+  <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <a href="/"><h3>Firebase Authentication</h3></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+
+	<button class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in" name="signin">Sign Out</button>
+
+  <button class="mdl-button mdl-js-button mdl-button--raised" id="viewOrders" style="float:right">回首頁</button>
+
+  <br>
+  <span>登入者是: </span>
+  <span id="loginEmaildisplay"></span>
+
+  <hr>
+
+  <div id="drawPannel">
+
+    <select id="userOrderList" onchange="showSelectedOrderPics(this.options[this.selectedIndex].value)">
+      <!-- <optgroup label="未結帳">
+       <option value="http://tw.yahoo.com">yahoo網頁</option>
+       <option value="http://www.google.com">google網頁</option>
+       <option value="http://www.youtube.com/">Youtbue</option>
+       <option value="http://www.pixnet.net/">pixnet</option>
+       <option value="http://www.wretch.cc">無名</option>
+      <optgroup label="已結帳"> -->
+    </select>
+
+      <button id="dtnDelOrder"><i class="ui-icon ui-icon-trash-b"></i></button>
+
+      <select id="picSelect" class="image-picker show-html" multiple="multiple">
+      </select>
+
+
+      <!-- Modal HTML embedded directly into document http://jquerymodal.com/ -->
+      <div id="outerModal" class="modal" style="position: relative; overflow: hidden">
+        <div id="innerModal" style="overflow-y: scroll">
+          <select id="modalPSelect" class="image-picker show-html"></select>
+          <button id="addToOrder" onclick="closeModal()" style="position: absolute; top:90%; right:5%">加入圖片<i class="ui-icon ui-icon-cart"></i></button>
+        </div>
+      </div>
+
+
+    <!-- <pre><code id="quickstart-account-details">null</code></pre> -->
+
+  <div>
+  </main>
+</div>
+
+</body>
+</html>
