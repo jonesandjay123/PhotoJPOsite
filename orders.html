@@ -62,18 +62,24 @@
       $("#outerModal").css({"top": "50px", "max-width": winWid+"px", "width": +winWid+"px", "height": winHig+"px", "max-height": winHig+"px"});
       $("#innerModal").css({"height": winHig+"px", "max-height": winHig+"px"});
       $("#outerModal").modal();
-      showUserAllUpdated();
+
+      var displayPicID = new Array(); //已經存在的圖片清單
+      $("#picSelect option").each(function()
+      {
+          displayPicID.push($(this).text()); //已經存在的圖片存進Array
+      });
+
+      showUserAllUpdated(displayPicID);
     }
 
     //讀取使用者所有上傳過的照片
-    function showUserAllUpdated(){
+    function showUserAllUpdated(displayPicID){
 
       //登入驗證
      firebase.auth().onAuthStateChanged(function(user) {
 
        if (user) {
          var uid = user.uid;
-        console.log("登入者的uid: "+uid);
 
         //在userImg中讀取屬於uid的圖片
         const userImgs = firebase.database().ref("userImg/"+uid);
@@ -83,9 +89,12 @@
           $("#modalPSelect").empty(); //先清空。
 
           snapshot.forEach(function(data) {
-                //console.log("圖片pid: " + data.key + ": "+data.val());
-                $("#modalPSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
-                $("#modalPSelect").imagepicker();
+                //確保要串進去的圖片，不存在displayPicID中(因為已經有的圖片就不提供再次選擇)
+                if(!displayPicID.includes(data.key)){
+                  //console.log("圖片pid: " + data.key + ": "+data.val());
+                  $("#modalPSelect").append("<option data-img-src='"+data.val()+"' value='"+data.val()+"' data-img-class='dynamicAppendPic'>"+data.key+"</option>");
+                  $("#modalPSelect").imagepicker();
+                }
               });
             });
 
