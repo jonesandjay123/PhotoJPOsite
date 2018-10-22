@@ -43,7 +43,7 @@
       if (firebase.auth().currentUser) {
 
         firebase.auth().signOut(); //執行登出
-        window.location.href = "email-password.html"; //跳轉
+        window.location.href = "index.html"; //跳轉
       }
     }
 
@@ -92,7 +92,7 @@
            }
            else{
              //如果使用者是未登入的狀態，直接登出
-             window.location.href = "email-password.html";
+             window.location.href = "index.html";
            }
 
        });
@@ -132,7 +132,7 @@
         else
         {
           //如果使用者是未登入的狀態，直接登出
-          window.location.href = "email-password.html";
+          window.location.href = "index.html";
         }
       });
 
@@ -257,7 +257,7 @@
        else
        {
          //如果使用者是未登入的狀態，直接登出
-         window.location.href = "email-password.html";
+         window.location.href = "index.html";
        }
      });
 
@@ -345,7 +345,7 @@
           //document.getElementById('quickstart-account-details').textContent = 'null';
 
           //如果使用者是未登入的狀態，直接登出
-	        window.location.href = "email-password.html";
+	        window.location.href = "index.html";
 
         }
         document.getElementById('quickstart-sign-in').disabled = false;
