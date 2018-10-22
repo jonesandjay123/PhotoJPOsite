@@ -317,6 +317,10 @@
 
     }
 
+    function changeUserByID(userID){
+      alert("使用者換成了: "+userID);
+    }
+
 	   //初始化
     function initApp() {
       console.log("已登入homepage");
@@ -336,6 +340,36 @@
           var providerData = user.providerData;
 
           document.getElementById('loginEmaildisplay').textContent = email;
+
+          //取得總會員人數
+          const userTable = firebase.database().ref("user/");
+          userTable.on("value", snapshot =>{
+
+            var totalUsers = snapshot.numChildren();
+            document.getElementById('totalSiteUsers').textContent = totalUsers;
+
+            $("#userIDList").empty(); //先清空。
+
+            if(totalUsers > 0){
+
+              snapshot.forEach(function(data) {
+                   //console.log("標頭: " + data.key + ": "+data.val());
+                   var userID = data.key;
+                   var UserEmail = null;
+
+                   //繼續往下一層找，找data的key值為UserEmail的內容(即為email)
+                   data.forEach(snap => {
+                     if(snap.key == 'UserEmail'){UserEmail = snap.val(); } //找到UserEmail
+                  });
+
+                  $('#userIDList').append($('<option>', {
+                      value: userID,
+                      text : UserEmail
+                  }));
+              });
+
+            }
+          });
 
           //元件初始化
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
@@ -447,6 +481,12 @@
   <br>
   <span>登入者是: </span>
   <span id="loginEmaildisplay"></span>
+  <br>
+  <span>總會員人數: </span>
+  <span id="totalSiteUsers"></span>
+
+  <br>
+  <select id="userIDList" onchange="changeUserByID(this.options[this.selectedIndex].value)"></select>
 
   <hr>
 
