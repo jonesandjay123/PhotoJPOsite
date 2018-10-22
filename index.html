@@ -95,7 +95,8 @@
 
         var inputObj = {
           registerTime: currentTime,
-          UserEmail: UserEmail
+          UserEmail: UserEmail,
+          administrator: false
         };
 
         firebase.database().ref("user/"+UserUID).set(inputObj,function(error){
