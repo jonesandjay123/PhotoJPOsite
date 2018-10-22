@@ -108,6 +108,50 @@
 
     }
 
+    function closeModal(){
+
+      //如果至少有一張圖片被選中，才繼續做圖片相關的動作。
+      if($('#modalPSelect :selected').length > 0){
+
+        //登入驗證
+        firebase.auth().onAuthStateChanged(function(user) {
+
+          if (user) {
+            var uid = user.uid;
+            var orderID = $("#userOrderList option:selected").text();
+            var inputObj = {};
+
+            //選中的圖片存進inputObj
+            $('#modalPSelect :selected').each(function(i, selectedElement) {
+               //console.log($(selectedElement).val() + "  " +$(selectedElement).text());
+               var pid = $(selectedElement).text();
+               var url = $(selectedElement).val();
+               inputObj[pid] = url;
+            });
+
+            //在orderImg中加入新的圖片，必須使用update(而非set)，否則會蓋掉上一筆的紀錄!!
+            firebase.database().ref("orderImg/"+orderID).update(inputObj,function(error){
+              if(error){
+                alert("orderImg"+orderID+"的資料寫入失敗!");
+                console.log("orderImg"+orderID+"的資料寫入失敗! error: " + error);
+              }
+              else{
+                console.log("orderImg"+orderID+" 資料寫入成功!");
+              }
+            });
+
+            }
+          else
+          {
+            //如果使用者是未登入的狀態，直接登出
+            window.location.href = "index.html";
+          }
+        });
+
+
+      }
+      $.modal.close(); //關閉Modal
+    }
 
 
     //將圖片從訂單中移除
@@ -428,7 +472,7 @@
       <div id="outerModal" class="modal" style="position: relative; overflow: hidden">
         <div id="innerModal" style="overflow-y: scroll">
           <select id="modalPSelect" class="image-picker show-html"></select>
-          <button id="addToOrder" style="position: absolute; top:90%; right:5%">加入圖片<i class="ui-icon ui-icon-cart"></i></button>
+          <button id="addToOrder" onclick="closeModal()" style="position: absolute; top:90%; right:5%">加入圖片<i class="ui-icon ui-icon-cart"></i></button>
         </div>
       </div>
 
