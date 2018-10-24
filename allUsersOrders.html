@@ -317,13 +317,65 @@
 
     }
 
+    //使用者email換掉以後的觸發
     function changeUserByID(userID){
-      alert("使用者換成了: "+userID);
+      drawPannelbyUID(userID); //利用登入者的id來帶出他的工單清單
+    }
+
+    //利用登入者的id來帶出他的工單清單
+    function drawPannelbyUID(uid){
+
+      //console.log("登入者的uid: "+uid);
+
+      //在userOrder中讀取屬於uid的訂單
+      const userOrders = firebase.database().ref("userOrder/"+uid);
+
+      userOrders.on("value", snapshot =>{
+
+        if(!snapshot.exists()){
+          $( "#drawPannel" ).hide();
+          $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
+        }
+
+        var unpaidList = new Array(); //未結帳的
+        var paidList = new Array();   //已結帳的
+
+        snapshot.forEach(function(data) {
+           //console.log("圖片pid: " + data.key + ": "+data.val());
+           if(data.val()){
+             paidList.push(data.key);
+           }
+           else{
+             unpaidList.push(data.key);
+           }
+        });
+
+        $("#userOrderList").empty(); //先清空。
+         var opt = document.createElement('option');
+
+         //讓陣列反轉，達到最新的排在清單最上面的效果。
+         paidList.reverse();
+         unpaidList.reverse();
+
+         //未結帳的
+         var gtpUnpaid = $('<optgroup label="未結帳" />');
+         unpaidList.forEach(function(element) {
+           $('<option />').html(element).appendTo(gtpUnpaid);
+         });
+         //已結帳的
+         var gtpPaid = $('<optgroup label="已結帳" />');
+         paidList.forEach(function(element) {
+            $('<option />').html(element).appendTo(gtpPaid);
+         });
+         gtpUnpaid.appendTo($("#userOrderList"));
+         gtpPaid.appendTo($("#userOrderList"));
+
+         showSelectedOrderPics($( "#userOrderList option:selected" ).text());
+       });
     }
 
 	   //初始化
     function initApp() {
-      console.log("已登入homepage");
 
 	     //登入驗證
       firebase.auth().onAuthStateChanged(function(user) {
@@ -367,7 +419,7 @@
                       text : UserEmail
                   }));
               });
-
+              $('#userIDList option[value='+uid+']').attr("selected", "selected"); //自動選中跟登入者uid一樣的項目
             }
           });
 
@@ -375,53 +427,8 @@
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
 //document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
 
-         console.log("登入者的uid: "+uid);
-
-         //在userOrder中讀取屬於uid的訂單
-         const userOrders = firebase.database().ref("userOrder/"+uid);
-
-         userOrders.on("value", snapshot =>{
-
-           if(!snapshot.exists()){
-             $( "#drawPannel" ).hide();
-             $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
-           }
-
-           var unpaidList = new Array(); //未結帳的
-           var paidList = new Array();   //已結帳的
-
-           snapshot.forEach(function(data) {
-              //console.log("圖片pid: " + data.key + ": "+data.val());
-              if(data.val()){
-                paidList.push(data.key);
-              }
-              else{
-                unpaidList.push(data.key);
-              }
-           });
-
-           $("#userOrderList").empty(); //先清空。
-            var opt = document.createElement('option');
-
-            //讓陣列反轉，達到最新的排在清單最上面的效果。
-            paidList.reverse();
-            unpaidList.reverse();
-
-            //未結帳的
-            var gtpUnpaid = $('<optgroup label="未結帳" />');
-            unpaidList.forEach(function(element) {
-              $('<option />').html(element).appendTo(gtpUnpaid);
-            });
-            //已結帳的
-            var gtpPaid = $('<optgroup label="已結帳" />');
-            paidList.forEach(function(element) {
-               $('<option />').html(element).appendTo(gtpPaid);
-            });
-            gtpUnpaid.appendTo($("#userOrderList"));
-            gtpPaid.appendTo($("#userOrderList"));
-
-            showSelectedOrderPics($( "#userOrderList option:selected" ).text());
-         });
+         //console.log("登入者的uid: "+uid);
+         drawPannelbyUID(uid); //利用登入者的id來帶出他的工單清單
 
         }
         else
