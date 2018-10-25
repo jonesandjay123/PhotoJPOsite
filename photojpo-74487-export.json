@@ -95,15 +95,127 @@
       "pid" : "153870784203684c1c198",
       "uploadtime" : 1538707842716,
       "url" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153870784203684c1c198?alt=media&token=8ded123e-7190-4610-ac07-de980c685a9c"
+    },
+    "15389854225698af9f27b" : {
+      "access" : true,
+      "fileType" : "image/jpeg",
+      "name" : "female.jpg",
+      "pid" : "15389854225698af9f27b",
+      "uploadtime" : 1538985424096,
+      "url" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15389854225698af9f27b?alt=media&token=f09805a7-7ad4-4440-9c00-838b2c59c810"
+    },
+    "1540373959147a5217729" : {
+      "access" : true,
+      "fileType" : "image/gif",
+      "name" : "construct.gif",
+      "pid" : "1540373959147a5217729",
+      "uploadtime" : 1540373960460,
+      "url" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/doM1mLzGW0OadI99jmy0t0ZeDm13%2F1540373959147a5217729?alt=media&token=1f1bafb6-05c6-4565-9a63-c179f6c2fd99"
+    }
+  },
+  "order" : {
+    "15398-44431-27da-0cd7" : {
+      "canceled" : false,
+      "orderAddress" : "",
+      "orderSpec" : "",
+      "orderTime" : 1539844431,
+      "paid" : false,
+      "shipAddress" : "",
+      "shipID" : "",
+      "shipped" : "",
+      "transactionID" : "",
+      "userID" : "i7gPsurbejZR1h5M8Lz297DZN8h2"
+    },
+    "15398-54453-f8a0-1ae5" : {
+      "canceled" : false,
+      "orderAddress" : "",
+      "orderSpec" : "",
+      "orderTime" : 1539854453,
+      "paid" : false,
+      "shipAddress" : "",
+      "shipID" : "",
+      "shipped" : "",
+      "transactionID" : "",
+      "userID" : "i7gPsurbejZR1h5M8Lz297DZN8h2"
+    },
+    "15399-28907-e42e-ec60" : {
+      "canceled" : false,
+      "orderAddress" : "",
+      "orderSpec" : "",
+      "orderTime" : 1539928907,
+      "paid" : false,
+      "shipAddress" : "",
+      "shipID" : "",
+      "shipped" : "",
+      "transactionID" : "",
+      "userID" : "i7gPsurbejZR1h5M8Lz297DZN8h2"
+    },
+    "15399-35960-daf2-446d" : {
+      "canceled" : false,
+      "orderAddress" : "",
+      "orderSpec" : "",
+      "orderTime" : 1539935960,
+      "paid" : false,
+      "shipAddress" : "",
+      "shipID" : "",
+      "shipped" : "",
+      "transactionID" : "",
+      "userID" : "i7gPsurbejZR1h5M8Lz297DZN8h2"
+    },
+    "15403-73967-fc72-fbdd" : {
+      "canceled" : false,
+      "orderAddress" : "",
+      "orderSpec" : "",
+      "orderTime" : 1540373967,
+      "paid" : false,
+      "shipAddress" : "",
+      "shipID" : "",
+      "shipped" : "",
+      "transactionID" : "",
+      "userID" : "doM1mLzGW0OadI99jmy0t0ZeDm13"
+    }
+  },
+  "orderImg" : {
+    "15398-44431-27da-0cd7" : {
+      "1538632122965cade1282" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538632122965cade1282?alt=media&token=f8fc9461-40ce-4a26-82e0-33d459676de3",
+      "153863806966351d6485a" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153863806966351d6485a?alt=media&token=6fe0c2be-6480-4947-97ed-024aab01fd2c",
+      "1538707742675e846969c" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538707742675e846969c?alt=media&token=d2764fa0-0404-41f3-8042-f24b89f40ec8"
+    },
+    "15399-28907-e42e-ec60" : {
+      "15386319807865f0fa6d3" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15386319807865f0fa6d3?alt=media&token=eaeb9e0d-f096-424e-bf72-8976fce84293",
+      "1538632122965cade1282" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538632122965cade1282?alt=media&token=f8fc9461-40ce-4a26-82e0-33d459676de3",
+      "1538632141438c6f34e3c" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538632141438c6f34e3c?alt=media&token=7c553880-d7ad-49ae-8fb2-3d870d208ee0",
+      "153863797629475a67858" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153863797629475a67858?alt=media&token=8779eb1d-759d-4cdb-b53a-a3635fc54cda"
+    },
+    "15399-35960-daf2-446d" : {
+      "1538631512756c75ad432" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538631512756c75ad432?alt=media&token=6cbce22c-387d-427c-921e-7577a5875ab9",
+      "15386320271073b16fa05" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15386320271073b16fa05?alt=media&token=4d54b5cd-cf27-4ac8-a69c-2d5e19fd5de2"
+    },
+    "15403-73967-fc72-fbdd" : {
+      "1540373959147a5217729" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/doM1mLzGW0OadI99jmy0t0ZeDm13%2F1540373959147a5217729?alt=media&token=1f1bafb6-05c6-4565-9a63-c179f6c2fd99"
     }
   },
   "user" : {
+    "doM1mLzGW0OadI99jmy0t0ZeDm13" : {
+      "UserEmail" : "test@yahoo.com",
+      "administrator" : false,
+      "registerTime" : 1540191821649
+    },
     "i7gPsurbejZR1h5M8Lz297DZN8h2" : {
       "UserEmail" : "jonesandjay123@yahoo.com.tw",
+      "administrator" : true,
       "registerTime" : 1538558792323
+    },
+    "pG7sUzrejUcf4M3MxrRED8ggbJt1" : {
+      "UserEmail" : "jpo@yahoo.com",
+      "administrator" : false,
+      "registerTime" : 1540374034470
     }
   },
   "userImg" : {
+    "doM1mLzGW0OadI99jmy0t0ZeDm13" : {
+      "1540373959147a5217729" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/doM1mLzGW0OadI99jmy0t0ZeDm13%2F1540373959147a5217729?alt=media&token=1f1bafb6-05c6-4565-9a63-c179f6c2fd99"
+    },
     "i7gPsurbejZR1h5M8Lz297DZN8h2" : {
       "1538631512756c75ad432" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538631512756c75ad432?alt=media&token=6cbce22c-387d-427c-921e-7577a5875ab9",
       "15386319642576e351c99" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15386319642576e351c99?alt=media&token=53c32e06-eaa4-42f9-a170-8635efefaefe",
@@ -116,32 +228,19 @@
       "153863797629475a67858" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153863797629475a67858?alt=media&token=8779eb1d-759d-4cdb-b53a-a3635fc54cda",
       "153863806966351d6485a" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153863806966351d6485a?alt=media&token=6fe0c2be-6480-4947-97ed-024aab01fd2c",
       "1538707742675e846969c" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538707742675e846969c?alt=media&token=d2764fa0-0404-41f3-8042-f24b89f40ec8",
-      "153870784203684c1c198" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153870784203684c1c198?alt=media&token=8ded123e-7190-4610-ac07-de980c685a9c"
+      "153870784203684c1c198" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F153870784203684c1c198?alt=media&token=8ded123e-7190-4610-ac07-de980c685a9c",
+      "15389854225698af9f27b" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15389854225698af9f27b?alt=media&token=f09805a7-7ad4-4440-9c00-838b2c59c810"
     }
   },
   "userOrder" : {
+    "doM1mLzGW0OadI99jmy0t0ZeDm13" : {
+      "15403-73967-fc72-fbdd" : false
+    },
     "i7gPsurbejZR1h5M8Lz297DZN8h2" : {
-      "123" : false
+      "15398-44431-27da-0cd7" : false,
+      "15398-54453-f8a0-1ae5" : false,
+      "15399-28907-e42e-ec60" : false,
+      "15399-35960-daf2-446d" : false
     }
-  },
-  "order" : {
-    "123" : {
-	  "userID" : "i7gPsurbejZR1h5M8Lz297DZN8h2",
-	  "shipID" : "99999",
-	  "orderTime" : 1538558892323,
-	  "orderSpec" : "",
-	  "orderAddress" : "",
-	  "shipAddress" : "",
-	  "shipped" : "",
-	  "transactionID" : "",
-	  "paid" : false,
-	  "canceled" : false
-	}
-  },
-  "orderImg" : {
-	"123" : {
-	  "1538631512756c75ad432" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F1538631512756c75ad432?alt=media&token=6cbce22c-387d-427c-921e-7577a5875ab9",
-      "15386319642576e351c99" : "https://firebasestorage.googleapis.com/v0/b/photojpo-74487.appspot.com/o/i7gPsurbejZR1h5M8Lz297DZN8h2%2F15386319642576e351c99?alt=media&token=53c32e06-eaa4-42f9-a170-8635efefaefe"
-	}
   }
 }
