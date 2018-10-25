@@ -332,9 +332,13 @@
 
       userOrders.on("value", snapshot =>{
 
+        $( "#drawPannel" ).show();
+        $( "#noOrderInfo" ).remove();
+
         if(!snapshot.exists()){
           $( "#drawPannel" ).hide();
-          $( "main" ).append( "<h4>查無訂單紀錄。</h4>" );
+          $( "main" ).append( "<h4 id='noOrderInfo'>查無訂單紀錄。</h4>" );
+          return;
         }
 
         var unpaidList = new Array(); //未結帳的
